@@ -1,0 +1,199 @@
+@keyframes arrive {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 50px, 0); }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0); } }
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Raleway";
+  font-size: 14px;
+  background: #96C0E6; }
+
+.container {
+  margin: auto;
+  margin-top: 25%;
+  width: 75%;
+  text-align: center; }
+  .container > * {
+    margin: auto; }
+
+.panel {
+  margin: auto;
+  width: inherit;
+  overflow: hidden;
+  opacity: 0;
+  animation: arrive 300ms ease-in-out 0.9s forwards; }
+  .panel > .form {
+    overflow: hidden;
+    margin-top: 25px;
+    border-radius: 6px; }
+
+.registrationPanel {
+  margin-top: 10px;
+  text-align: center;
+  display: inline-flex;
+  text-align: center;
+  background-color: #E5E5E5;
+  border-radius: 6px;
+  border: 0; }
+  .registrationPanel > p {
+    padding: 20px;
+    margin-top: 0;
+    margin-bottom: 0;
+    transition: background-color 0.2s ease;
+    cursor: pointer; }
+    .registrationPanel > p:hover {
+      background-color: #EEEEEE; }
+
+.loginButton {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+  border-right: 1px solid; }
+
+.registerButton {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  border-left: 1px solid; }
+
+.formInput {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  -webkit-appearance: none;
+  border: 0;
+  outline: 0;
+  transition: 0.3s; }
+  .formInput:focus {
+    background: #f7f7f7; }
+
+.formButton {
+  display: block;
+  width: 100%;
+  padding: 20px;
+  font-family: "Raleway";
+  -webkit-appearance: none;
+  outline: 0;
+  border: 0;
+  color: white;
+  background: #ABA194;
+  transition: 0.3s;
+  cursor: pointer; }
+  .formButton:hover {
+    background: #a09486; }
+
+.navbar {
+  background: white;
+  margin-top: 0;
+  padding: 20px;
+  box-shadow: 0px 1px 10px grey;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; }
+
+#username {
+  font-weight: bold;
+  font-size: 20px; }
+
+#logoutButton {
+  position: absolute;
+  background: #B8BABF;
+  padding-top: 0;
+  top: 0;
+  right: 0;
+  font-weight: bold;
+  font-size: 12px;
+  padding-left: 40px;
+  padding-right: 40px;
+  padding-top: 43.5px;
+  padding-bottom: 43.5px;
+  cursor: pointer;
+  box-shadow: -0.5px 0px 3px grey; }
+
+.itemSearch {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; }
+  .itemSearch > input {
+    margin-right: 25%;
+    margin-left: 25%;
+    padding: 10px;
+    border-radius: 10px;
+    border-style: none; }
+  .itemSearch > button {
+    margin-top: 20px;
+    margin-right: 40%;
+    margin-left: 40%;
+    padding: 10px;
+    background: red;
+    border-style: none;
+    border-radius: 10px;
+    cursor: pointer; }
+
+.itemDisplay {
+  margin: 0;
+  padding: 0;
+  left: 0; }
+  .itemDisplay > * {
+    display: none; }
+
+.item {
+  width: 300px;
+  max-width: 300px;
+  height: 200px;
+  max-height: 200px;
+  position: absolute;
+  border-radius: 10px;
+  background: white;
+  left: 50%;
+  margin-top: 20px;
+  transform: translateX(-50%);
+  text-align: center; }
+  .item > * {
+    padding: 20px;
+    margin: auto; }
+
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%; }
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px; }
+
+tr:nth-child(even) {
+  background-color: #dddddd; }
+
+.title {
+  text-align: center; }
+
+.buttonDashboard {
+  display: flex;
+  text-align: center;
+  justify-content: center; }
+
+.adminButton {
+  padding: 20px;
+  text-decoration: none;
+  margin: 10px;
+  background-color: #555555;
+  color: white;
+  border: 2px solid white;
+  border-radius: 5px;
+  cursor: pointer; }
+
+.newItemPanel {
+  margin: auto;
+  width: inherit;
+  overflow: hidden;
+  opacity: 1; }
+  .newItemPanel > .form {
+    overflow: hidden;
+    margin-top: 10px;
+    border-radius: 6px; }
+
+/*# sourceMappingURL=index.css.map */
