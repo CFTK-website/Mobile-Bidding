@@ -18,7 +18,13 @@ class Admin extends Component {
 			itemsChecked: false,
 			newItemBox: false
 		};
+
+		this.sendEmail = this.sendEmail.bind(this);
     }
+
+	sendEmail(phone, carrier, itemId, message) {
+		this.props.sendEmail(phone, carrier, itemId, message);
+	}
 
 	componentDidMount() {
 		let itemsRef = fire.database().ref('/items').orderByKey();
@@ -30,7 +36,6 @@ class Admin extends Component {
 		})
 
 		itemsRef.on('child_changed', snapshot => {
-			// console.log(snapshot.val());
 			let item = { child: snapshot.val(), id: snapshot.key, isChecked: false };
 			var newItems = this.state.items;
 			for(var i = 0; i < newItems.length; i++) {
@@ -49,8 +54,6 @@ class Admin extends Component {
 			let item = { child: snapshot.val(), id: snapshot.key, isChecked: false };
 			var newItems = [];
 			for(var i = 0; i < this.state.items.length; i++) {
-				console.log(this.state.items[i].id);
-				console.log(item.id);
 				if(this.state.items[i].id !== item.id) {
 					newItems.push(this.state.items[i]);
 				}
@@ -112,11 +115,30 @@ class Admin extends Component {
 	}
 
 	close() {
-		let itemsCopy = this.state.items;
+		var itemsCopy = this.state.items;
 
 		for(var i = 0; i < this.state.items.length; i++) {
 			if(itemsCopy[i].isChecked === true) {
 				itemsCopy[i].isChecked = false;
+
+				var itemRef = fire.database().ref('items/' + itemsCopy[i].id);
+				itemRef.once("value", itemInfo => {
+					var itemId = itemsCopy[i].id;
+					var itemName = itemsCopy[i].child.itemName;
+					
+					var currentWinner = itemInfo.val()["currentWinner"];
+					if(currentWinner !== "") {
+						var ref = fire.database().ref('/users/' + parseInt(currentWinner));
+
+						ref.once("value", carrierInfo => {
+							var info = carrierInfo.val();
+							var message = "You have won " + itemName + "!";
+							console.log(message);
+							console.log("Sending email");
+							this.props.sendEmail(currentWinner, info.carrier, itemId, message);
+						});
+					}
+				});
 
 				fire.database().ref('items/' + itemsCopy[i].id).update({
 					isOpen: false
@@ -135,16 +157,16 @@ class Admin extends Component {
 		});
 	}
 
-	showItemBox() {
-		this.setState({
-			newItemBox: true
-		});
-	}
-
-	hideItemBox() {
-		this.setState({
-			newItemBox: false
-		});
+	toggleItemBox() {
+		if(this.state.newItemBox === false) {
+			this.setState({
+				newItemBox: true
+			});
+		} else {
+			this.setState({
+				newItemBox: false
+			});
+		}
 	}
 
 	addItem() {
@@ -152,11 +174,15 @@ class Admin extends Component {
 			var itemID = this.itemID;
 			var itemName = this.itemName;
 			var itemCategory = this.itemCategory;
+			var startingBid = this.startingBid;
+
+			var that = this;
 
 			fire.database().ref('items/' + this.itemID.value).set({
 				category: this.itemCategory.value,
-	            bid: 0,
+	            bid: this.startingBid.value,
 	            currentWinner: "",
+				winnerName: "",
 				isOpen: false,
 	            itemName: this.itemName.value
 	        }, function(err) {
@@ -164,11 +190,17 @@ class Admin extends Component {
 	                // Insert error handling here for register page
 	                console.log(err);
 					alert("Item could not be added...")
+
 					return;
 	            } else {
+					alert("Item added!");
+
 					itemID.value = '';
 					itemName.value = '';
 					itemCategory.value = '';
+					startingBid.value = '';
+
+					that.toggleItemBox();
 				}
 	        });
 		}
@@ -276,12 +308,14 @@ class Admin extends Component {
 				if(row[0].length > 0 && row[1].length > 0 && row[2].length > 0) {
 					var itemID = row[1];
 					var itemName = row[2];
+					var startingBid = row[3];
 					var itemCategory = row[0];
 
 					fire.database().ref('items/' + itemID).set({
 						category: itemCategory,
-			            bid: 0,
+			            bid: startingBid,
 			            currentWinner: "",
+						winnerName: "",
 						isOpen: false,
 			            itemName: itemName
 			        }, function(err) {
@@ -301,32 +335,33 @@ class Admin extends Component {
         return (
 			<div>
 				<Navbar userType="Admin" username={this.props.username} logout={this.props.logout} />
-				<h1 className="title">Items</h1>
+				<h1 className="title">Mobile Bidding Admin</h1>
 				<div className="buttonDashboard">
-					<button className="adminButton" id="openButton" onClick={() => this.open()}>Open</button>
-					<button className="adminButton" id="closeButton" onClick={() => this.close()}>Close</button>
-					<button className="adminButton" id="addButton" onClick={() => this.showItemBox()}>Add Item</button>
+					<button className="adminButton" id="openButton" onClick={() => this.open()}>Open Item(s)</button>
+					<button className="adminButton" id="closeButton" onClick={() => this.close()}>Close Items(s)</button>
+					<button className="adminButton" id="addButton" onClick={() => this.toggleItemBox()}>Add Item</button>
 					<button className="adminButton" id="removeItem" onClick={() => this.removeItems()}>Remove Items</button>
 					<ReactFileReader handleFiles={this.handleFiles} fileTypes={'.csv'}>
 					    <button className="adminButton" id="uploadFile">Upload</button>
 					</ReactFileReader>
 				</div>
 				{this.state.newItemBox ?
-					<div className="container">
-						<div className="newItemPanel">
-							<div className="form" id="newItemBox">
-								<div className="formGroup">
-									<input type="text" className="formInput" placeholder="Category*" ref={ el => this.itemCategory = el } />
-								</div>
-								<div className="formGroup">
-									<input type="text" className="formInput" placeholder="ID*" ref={ el => this.itemID = el } />
-								</div>
-								<div className="formGroup">
-									<input type="text" className="formInput" placeholder="Name*" ref={ el => this.itemName = el} />
-								</div>
-								<input type="submit" className="formButton" onClick={this.addItem.bind(this)} />
-								<button className="formButton" onClick={() => this.hideItemBox()}>Cancel</button>
+					<div className="newItemPanel">
+						<div className="form" id="newItemBox">
+							<div className="formGroup">
+								<input type="text" className="formInput" placeholder="Category*" ref={ el => this.itemCategory = el } />
 							</div>
+							<div className="formGroup">
+								<input type="text" className="formInput" placeholder="ID*" ref={ el => this.itemID = el } />
+							</div>
+							<div className="formGroup">
+								<input type="text" className="formInput" placeholder="Name*" ref={ el => this.itemName = el} />
+							</div>
+							<div className="formGroup">
+								<input type="text" className="formInput" placeholder="Starting Bid*" ref={ el => this.startingBid = el} />
+							</div>
+							<input type="submit" className="formButton" onClick={this.addItem.bind(this)} />
+							<button className="formButton" onClick={() => this.toggleItemBox()}>Cancel</button>
 						</div>
 					</div>
 				:
@@ -339,14 +374,16 @@ class Admin extends Component {
 						<th onClick={() => this.sortTable(2)} style={tableHeader}>Category</th>
 						<th onClick={() => this.sortTable(3)} style={tableHeader}>Item Name</th>
 						<th onClick={() => this.sortTable(4)} style={tableHeader}>Current Winner</th>
-						<th onClick={() => this.sortTable(5)} style={tableHeader}>Current Bid ($)</th>
-						<th onClick={() => this.sortTable(6)} style={tableHeader}>Status</th>
+						<th onClick={() => this.sortTable(5)} style={tableHeader}>Phone Number</th>
+						<th onClick={() => this.sortTable(6)} style={tableHeader}>Current Bid ($)</th>
+						<th onClick={() => this.sortTable(7)} style={tableHeader}>Status</th>
 					</tr>
 					{this.state.items.map( item => <tr className=".adminItem" id={item.id}>
 						<td><input type="checkbox" name="itemCheckbox" value={item.id} checked={item.isChecked} onClick={() => this.toggleCheckboxes(item.id)}/></td>
 						<td>{item.id}</td>
 						<td>{item.child.category}</td>
 						<td>{item.child.itemName}</td>
+						<td>{item.child.winnerName}</td>
 						<td>{item.child.currentWinner}</td>
 						<td>{item.child.bid}</td>
 						{item.child.isOpen ?
@@ -354,7 +391,8 @@ class Admin extends Component {
 						:
 							<td><b>Closed</b></td>
 						}
-					</tr>)}
+					</tr>
+					)}
 				</table>
 			</div>
 		)

@@ -4,30 +4,19 @@ $font-size: 14px;
 
 $color-primary: #ABA194;
 
-@keyframes arrive {
-    0% {
-        opacity: 0;
-        transform: translate3d(0, 50px, 0);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
-}
-
 body {
     margin: 0;
     padding: 0;
 	font-family: $font-primary;
     font-size: $font-size;
 	background: #96C0E6;
-    // height: 100vh
 }
 
 .container {
-	margin: auto;
-	margin-top: 25%;
+	position: absolute;
+	top: 40%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 	width: 75%;
 	text-align: center;
 
@@ -40,8 +29,6 @@ body {
 	margin: auto;
 	width: inherit;
 	overflow: hidden;
-	opacity: 0;
-	animation: arrive 300ms ease-in-out 0.9s forwards;
 
 	> .form {
 		overflow: hidden;
@@ -92,6 +79,7 @@ body {
     border: 0;
     outline: 0;
     transition: 0.3s;
+	border-radius: 0;
 
     &:focus {
         background: darken(#fff, 3%);
@@ -165,7 +153,9 @@ body {
 		margin-right: 40%;
 		margin-left: 40%;
 		padding: 10px;
-		background: red;
+		background: #555555;
+		color: white;
+		font-size: 12px;
 		border-style: none;
 		border-radius: 10px;
 		cursor: pointer;
@@ -196,25 +186,35 @@ body {
 	text-align: center;
 
 	> * {
-		padding: 20px;
 		margin: auto;
 	}
 }
 
-table {
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
-    width: 100%;
+.itemMeta {
+	line-height: 10px;
 }
 
-td, th {
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
-}
+.itemInfo, .isClosed {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 10px;
+	width: 100%;
 
-tr:nth-child(even) {
-    background-color: #dddddd;
+	> button {
+		color: white;
+		font-size: 12px;
+		background: #555555;
+		padding: 5px 10px 5px 10px;
+		border-radius: 5px;
+		margin: 5px;
+	}
+
+	input {
+		border: 2px solid #555555;
+		padding: 5px;
+		border-radius: 5px;
+	}
 }
 
 // Admin page
@@ -230,6 +230,7 @@ tr:nth-child(even) {
 
 .adminButton {
 	padding: 20px;
+	font-size: 14px;
 	text-decoration: none;
 	margin: 10px;
 	background-color: #555555;
@@ -239,16 +240,61 @@ tr:nth-child(even) {
 	cursor: pointer;
 }
 
-.newItemPanel {
+.newItemPanel, .userSearchPanel {
 	margin: auto;
-	width: inherit;
+	margin-bottom: 20px;
+	width: 50%;
+	text-align: center;
 	overflow: hidden;
 	opacity: 1;
-	// animation: arrive 300ms ease-in-out 0.9s forwards;
 
 	> .form {
 		overflow: hidden;
 		margin-top: 10px;
 	    border-radius: 6px;
 	}
+}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th {
+	background-color: #555555;
+	color: white;
+}
+
+td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+tr {
+	background-color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #dddddd;
+}
+
+// Log Message Box
+
+.log {
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	background: white;
+	padding: 20px;
+	margin-bottom: 20px;
+	border-radius: 5px;
+	text-align: center;
+}
+
+.logMessage {
+	padding: 0;
+	margin: 0;
 }
